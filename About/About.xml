@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ModMetaData>
+	<name>Signals</name>
+	<author>justarandomgeek</author>
+	<targetVersion>Alpha 9</targetVersion>
+	<description>This mod adds electrical signals to control Relays and other devices.</description>
+</ModMetaData>

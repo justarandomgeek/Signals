@@ -1,0 +1,13 @@
+﻿<?xml version="1.0"?>
+<Defs>
+  <DesignationCategoryDef>
+    <defName>Signals</defName>
+    <label>signals</label>
+    <description>Electronic signal transmission and management.</description>
+    <order>-50</order>
+    <specialDesignatorClasses>
+      <li>Designator_Cancel</li>
+      <li>Designator_Deconstruct</li> 
+    </specialDesignatorClasses>
+  </DesignationCategoryDef>
+</Defs>
