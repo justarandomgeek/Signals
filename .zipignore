@@ -1,0 +1,5 @@
+Signals\Source\*
+Signals\.zipignore
+Signals\.git*
+Signals\Signals.*
+Signals\makezip.bat
