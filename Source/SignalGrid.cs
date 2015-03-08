@@ -89,7 +89,7 @@ namespace Signals
 		
 		public static CompSignal SignalNodeAt(IntVec3 c, IntRot side)
 		{
-			return SignalListAt(c).Find(s=>s.CanConnectTo(side));
+			return SignalListAt(c).Find(s=>s.CanConnectTo(new IntRot((side.AsInt+4-s.parent.Rotation.AsInt)%4)));
 		}
 		
 		public static IEnumerable<CompSignalSource> SignalSourcesAt(IntVec3 c)

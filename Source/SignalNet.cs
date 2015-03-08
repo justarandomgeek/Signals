@@ -46,7 +46,7 @@ namespace Signals
 		
 		public SignalNet(CompSignal newNode) : this(new List<CompSignal>{newNode})
 		{
-			
+
 		}
 
 		public void RegisterNode(CompSignal node)
@@ -142,9 +142,11 @@ namespace Signals
 			
 			Log.Message(string.Format("Splitting net {0} at {1}.",this.NetID,node.parent));
 			
+			var spawnedNets = new List<SignalNet>();
+			
 			this.DeregisterNode(node);
 			
-			var spawnedNets = new List<SignalNet>();
+			if(this.nodes.Count == 0) return spawnedNets;
 			
 			for (int r = 0; r < 4; r++) {
 				var adjacentNode = node.AdjacentNode(new IntRot(r));
