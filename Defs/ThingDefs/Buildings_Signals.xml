@@ -18,11 +18,11 @@
     <eType>Building_PowerConduit</eType>
     <label>signal conduit</label>
     <thingClass>Signals.Building_SignalConduit</thingClass>
-    <linkDrawerType>Transmitter</linkDrawerType>
+    <linkDrawerType>Basic</linkDrawerType>
     <linkFlags>
-      <li>None</li>
+      <li>Custom7</li>
     </linkFlags>
-    <category>Building</category>
+  	<category>Building</category>
     <graphicPath>Things/Building/Linked/PowerConduit_Atlas</graphicPath>
     <graphicClass>Graphic_Single</graphicClass>
     <blueprintgraphicPath>Things/Building/Linked/PowerConduit_Blueprint_Atlas</blueprintgraphicPath>
@@ -152,6 +152,46 @@
     <constructEffect>ConstructMetal</constructEffect>
   </ThingDef>
 
+<ThingDef ParentName="BuildingBase">
+    <defName>PressurePlate</defName>
+    <eType>Building_PowerConduit</eType>
+    <label>pressure plate</label>
+    <thingClass>Signals.Building_PressurePlate</thingClass>
+    <category>Building</category>
+    <description>Sends a signal based on the items piled on top of it.</description>
+    <graphicPath>Terrain/Surfaces/MetalTile</graphicPath>
+    <graphicClass>Graphic_Single</graphicClass>
+    <shaderType>Transparent</shaderType>
+    <building>
+      <ignoreNeedsPower>true</ignoreNeedsPower>
+      <isEdifice>true</isEdifice>
+      <allowWireConnection>false</allowWireConnection>
+    </building>
+    <altitudeLayer>FloorEmplacement</altitudeLayer>
+    <passability>Standable</passability>
+    <leaveResourcesWhenKilled>false</leaveResourcesWhenKilled>
+    <statBases>
+      <MaxHealth>120</MaxHealth>
+      <WorkToMake>200</WorkToMake>
+      <Flammability>0.4</Flammability>
+      <Beauty>-2</Beauty>
+    </statBases>
+    <placingDraggableDimensions>0</placingDraggableDimensions>
+    <costList>
+      <Steel>25</Steel>
+    </costList>
+    <comps>
+      <li>
+        <compClass>Signals.CompSignalSource</compClass>
+      </li>
+    </comps>
+    <rotatable>false</rotatable>
+    <selectable>true</selectable>
+    <neverMultiSelect>false</neverMultiSelect>
+    <tickerType>Normal</tickerType>
+    <designationCategory>Signals</designationCategory>
+    <constructEffect>ConstructMetal</constructEffect>
+  </ThingDef>
 
 
 </Buildings>

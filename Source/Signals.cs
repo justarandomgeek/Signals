@@ -87,20 +87,31 @@ namespace Signals
             compSignal = GetComp<CompSignalSource>();
             compPower = GetComp<CompPower>();
         }
-        public override IEnumerable<Gizmo> GetGizmos()
-		{
-			foreach (var gizmo in base.GetGizmos()) {
-				
-				//TODO: clean this up to be more a more specific filter for the "Toggle Power" command...
-				if(!(gizmo is Command_Toggle)) yield return gizmo;
-			}
-		}
-		
+        
 		public override void Tick()
 		{
 			base.Tick();
 			
 			compSignal.OutputSignal = compPower.PowerNet.CurrentStoredEnergy() > 100;
+		}
+	}
+	
+	public class Building_PressurePlate: Building
+	{
+	  	CompSignalSource compSignal;
+	  	
+        public override void SpawnSetup()
+        {
+            base.SpawnSetup();
+            
+            compSignal = GetComp<CompSignalSource>();
+        }
+        
+		public override void Tick()
+		{
+			base.Tick();
+			
+			compSignal.OutputSignal = Find.ThingGrid.CellContains(this.Position,EntityCategory.Item);
 		}
 	}
 	
@@ -114,7 +125,7 @@ namespace Signals
 		{
 			if(this.connectedNet == null) return "No Signal Net";
 			return "Signal: " + this.connectedNet.CurrentSignal() +
-				"Signal Net: " + this.connectedNet;
+				"\nSignal Net: " + this.connectedNet.NetID;
 		}
 		
 		public override void PostSpawnSetup()
@@ -198,5 +209,13 @@ namespace Signals
 	public class CompSignalSource : CompSignal
 	{
 		public bool OutputSignal;
+		
+		public override string CompInspectStringExtra()
+		{
+			if(this.connectedNet == null) return "No Signal Net";
+			return "\nOutput: " + this.OutputSignal +
+				"\nSignal: " + this.connectedNet.CurrentSignal() +
+				"\nSignal Net: " + this.connectedNet.NetID;
+		}
 	}
 }
