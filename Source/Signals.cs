@@ -122,12 +122,54 @@ namespace Signals
 		}
 	}
 	
+	public class Command_ToggleInvert : Command_Toggle
+	{
+		public Command_ToggleInvert(Building_LogicBuffer l)
+		{
+			this.isActive = ()=>l.InvertOutput;
+			this.toggleAction = ()=>{
+				l.InvertOutput ^= true;
+			};
+		}
+		
+		public Command_ToggleInvert(Building_LogicGate l)
+		{
+			this.isActive = ()=>l.InvertOutput;
+			this.toggleAction = ()=>{
+				l.InvertOutput ^= true;
+			};
+		}
+		
+		public override string Desc {
+			get {
+				return "Toggle Inverting the output signal.";
+			}
+		}
+		
+		public override string Label {
+			get {
+				return "toggle invert";
+			}
+		}
+		
+	}
+	
 	public class Building_LogicBuffer: Building
 	{
 		CompSignalSource sigOutput;
 		CompSignalOther sigInput;
 		
 		public bool InvertOutput { get; set; }
+		
+		public override IEnumerable<Gizmo> GetGizmos()
+		{
+			foreach (var gizmo in base.GetGizmos()) {
+				yield return gizmo;
+			}
+			
+			yield return new Command_ToggleInvert(this);
+			
+		}
 		
 		public override void SpawnSetup()
         {
@@ -144,7 +186,7 @@ namespace Signals
 			sigOutput.OutputSignal = sigInput.connectedNet.CurrentSignal() ^ InvertOutput;
 		}
 	}
-	
+		
 	
 	public class Building_LogicGateAND: Building_LogicGate
 	{
@@ -174,6 +216,16 @@ namespace Signals
 		public bool InvertOutput { get; set; }
 		
 		protected abstract bool GateFunction(bool? A, bool? B, bool? C);
+		
+		public override IEnumerable<Gizmo> GetGizmos()
+		{
+			foreach (var gizmo in base.GetGizmos()) {
+				yield return gizmo;
+			}
+			
+			yield return new Command_ToggleInvert(this);
+			
+		}
 		
 		public override void SpawnSetup()
         {

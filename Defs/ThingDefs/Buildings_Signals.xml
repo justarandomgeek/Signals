@@ -243,7 +243,7 @@
     <constructEffect>ConstructMetal</constructEffect>
   </ThingDef>
 
-<ThingDef ParentName="BuildingBase">
+  <ThingDef ParentName="BuildingBase">
     <defName>LogicGateXOR</defName>
     <eType>Building_PowerConduit</eType>
     <label>XOR gate</label>
@@ -283,6 +283,50 @@
       </li>
       <li>
     	<compClass>Signals.CompSignalW</compClass>
+      </li>
+    </comps>
+    <rotatable>true</rotatable>
+    <selectable>true</selectable>
+    <neverMultiSelect>false</neverMultiSelect>
+    <tickerType>Normal</tickerType>
+    <designationCategory>Signals</designationCategory>
+    <constructEffect>ConstructMetal</constructEffect>
+  </ThingDef>
+
+  <ThingDef ParentName="BuildingBase">
+    <defName>LogicBuffer</defName>
+    <eType>Building_PowerConduit</eType>
+    <label>logic buffer</label>
+    <thingClass>Signals.Building_LogicBuffer</thingClass>
+    <category>Building</category>
+    <description>Buffers the transmission of a signal from one net to another. This is a one-way gate.</description>
+    <graphicPath>Things/Signals/LogicBuffer</graphicPath>
+    <graphicClass>Graphic_Single</graphicClass>
+    <shaderType>Transparent</shaderType>
+    <building>
+      <ignoreNeedsPower>true</ignoreNeedsPower>
+      <isEdifice>true</isEdifice>
+      <allowWireConnection>false</allowWireConnection>
+    </building>
+    <altitudeLayer>Waist</altitudeLayer>
+    <passability>Standable</passability>
+    <leaveResourcesWhenKilled>false</leaveResourcesWhenKilled>
+    <statBases>
+      <MaxHealth>120</MaxHealth>
+      <WorkToMake>200</WorkToMake>
+      <Flammability>0.4</Flammability>
+      <Beauty>-2</Beauty>
+    </statBases>
+    <placingDraggableDimensions>0</placingDraggableDimensions>
+    <costList>
+      <Steel>25</Steel>
+    </costList>
+    <comps>
+      <li>
+        <compClass>Signals.CompSignalSourceN</compClass>
+      </li>
+      <li>
+    	<compClass>Signals.CompSignalOther</compClass>
       </li>
     </comps>
     <rotatable>true</rotatable>
