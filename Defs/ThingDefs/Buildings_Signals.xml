@@ -337,4 +337,47 @@
     <constructEffect>ConstructMetal</constructEffect>
   </ThingDef>
 
+  <ThingDef ParentName="BuildingBase">
+    <defName>SignalCrossover</defName>
+    <eType>Building_PowerConduit</eType>
+    <label>Signal Crossover</label>
+    <thingClass>Building</thingClass>
+    <category>Building</category>
+    <description>Allows signals to cross over each other.</description>
+    <graphicPath>Things/Signals/Crossover</graphicPath>
+    <graphicClass>Graphic_Single</graphicClass>
+    <shaderType>Transparent</shaderType>
+    <building>
+      <ignoreNeedsPower>true</ignoreNeedsPower>
+      <isEdifice>true</isEdifice>
+      <allowWireConnection>false</allowWireConnection>
+    </building>
+    <altitudeLayer>Waist</altitudeLayer>
+    <passability>Standable</passability>
+    <leaveResourcesWhenKilled>false</leaveResourcesWhenKilled>
+    <statBases>
+      <MaxHealth>120</MaxHealth>
+      <WorkToMake>200</WorkToMake>
+      <Flammability>0.4</Flammability>
+      <Beauty>-2</Beauty>
+    </statBases>
+    <placingDraggableDimensions>0</placingDraggableDimensions>
+    <costList>
+      <Steel>25</Steel>
+    </costList>
+    <comps>
+      <li>
+        <compClass>Signals.CompSignalNS</compClass>
+      </li>
+      <li>
+    	<compClass>Signals.CompSignalEW</compClass>
+      </li>
+    </comps>
+    <rotatable>false</rotatable>
+    <selectable>true</selectable>
+    <neverMultiSelect>false</neverMultiSelect>
+    <tickerType>Normal</tickerType>
+    <designationCategory>Signals</designationCategory>
+    <constructEffect>ConstructMetal</constructEffect>
+  </ThingDef>
 </Buildings>

@@ -289,6 +289,20 @@ namespace Signals
 			return side == IntRot.west;
 		}
 	}
+	public class CompSignalNS:CompSignal
+	{
+		public override bool CanConnectTo(IntRot side)
+		{
+			return side == IntRot.north || side == IntRot.south;
+		}
+	}
+	public class CompSignalEW:CompSignal
+	{
+		public override bool CanConnectTo(IntRot side)
+		{
+			return side == IntRot.east || side == IntRot.west;
+		}
+	}
 	
 	
 	// Connect to anything not claimed by a direction piece already...
