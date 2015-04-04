@@ -7,9 +7,9 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using System.Linq;
 
 using UnityEngine;
 using Verse;
@@ -22,12 +22,30 @@ using RimWorld;
 
 namespace Signals
 {
+	public struct SignalSubNode
+	{
+		public readonly CompSignal Node;
+		public readonly int Index;
+		
+		public SignalSubNode(CompSignal node, int idx)
+		{
+			this.Node = node;
+			this.Index = idx;
+		}
+		
+		public SignalNet ConnectedNet { get { return Node.ConnectedNets[Index]; } }
+		public SignalSubNode AdjacentNode(IntRot r)
+		{
+			return new SignalSubNode(Node.AdjacentNode(r),Index);
+		}
+	}
+	
 	public class SignalNet
 	{
 		private static int lastID;
 		
-		public List<CompSignal> nodes = new List<CompSignal>();
-		public List<CompSignalSource> sources = new List<CompSignalSource>();
+		public List<SignalSubNode> nodes = new List<SignalSubNode>();
+		public List<Tuple<CompSignalSource,int>> sources = new List<Tuple<CompSignalSource,int>>();
 		public int NetID { get; private set; }
 		
 		
@@ -36,7 +54,7 @@ namespace Signals
 			NetID = lastID++;
 		}
 		
-		public SignalNet(IEnumerable<CompSignal> newNodes) : this()
+		public SignalNet(IEnumerable<SignalSubNode> newNodes) : this()
 		{
 			foreach (var node in newNodes) {
 				RegisterNode(node);
@@ -44,58 +62,62 @@ namespace Signals
 			
 		}
 		
-		public SignalNet(CompSignal newNode) : this(new List<CompSignal>{newNode})
+		public SignalNet(SignalSubNode newNode) : this(new List<SignalSubNode>{newNode}){}
+		public SignalNet(CompSignal newNode,int idx) : this(new SignalSubNode(newNode,idx)){}
+		
+		public void RegisterNode(SignalSubNode node)
 		{
-
+			RegisterNode(node.Node,node.Index);
 		}
-
-		public void RegisterNode(CompSignal node)
+		public void RegisterNode(CompSignal node,int idx)
 		{
-			
-			if(node.connectedNet==this)
+			if(node.ConnectedNets[idx] == this)
 			{
-				Log.Warning("Tried to register " + node + " on net it's already on!");
+				Log.Warning("Tried to register " + node + ":" + idx + " on net it's already on!");
 				return;
 			}
 			
-			if(node.connectedNet!=null)
+			if(node.ConnectedNets[idx]!=null)
 			{
-				//Log.Warning("Tried to register node that's already on another net! Merging nets instead...");
-				//node.connectedNet.MergeIntoNet(this);
-				
 				Log.Warning(string.Format(
 					"Tried to register {0} onto net {1}, which is already on net {2}! Transferring node instead...",
-					node,this.NetID,node.connectedNet.NetID));
-				node.connectedNet.DeregisterNode(node);
+					node,this.NetID,node.ConnectedNets[idx].NetID));
+				node.ConnectedNets[idx].DeregisterNode(node,idx);
 				
 				return;
 			}
 				
 			
 			// register the new node
-			this.nodes.Add(node);
+			this.nodes.Add(new SignalSubNode(node,idx));
 			
 			// inform the node of it's new Net
-			node.connectedNet = this;
-			
+			node.ConnectedNets[idx] = this;
+		
 			// If node is a Source, add it there too..
 			var source = node as CompSignalSource;
 			if(source != null)
 			{
-				sources.Add(source);
+				sources.Add(new Tuple<CompSignalSource, int>(source,idx));
 			}
+			
 		}		
-		public void DeregisterNode(CompSignal node)
+		
+		public void DeregisterNode(SignalSubNode node)
+		{
+			DeregisterNode(node.Node,node.Index);
+		}
+		public void DeregisterNode(CompSignal node, int idx)
 		{
 			// register the new node
-			this.nodes.Remove(node);
+			this.nodes.Remove(new SignalSubNode(node,idx));
 			
 			// inform the node of it's new Net
-			node.connectedNet = null;
+			node.ConnectedNets[idx] = null;
 			
-			// If node is a Source, add it there too..
+			// If node is a Source, remove it there too..
 			var source = node as CompSignalSource;
-			if(source != null) sources.Remove(source);
+			if(source != null) sources.Remove(new Tuple<CompSignalSource, int>(source,idx));
 		}
 		
 		
@@ -104,43 +126,28 @@ namespace Signals
 			bool sig = false;
 			
 			foreach (var source in sources) {
-				sig |= source.OutputSignal;
+				sig |= source.First.OutputSignal[source.Second];
 			}
 			
 			return sig;
 		}
 		
-		public override string ToString()
-		{
-			var stringBuilder = new StringBuilder();
-			stringBuilder.AppendLine("SIGNALNET: " + this.NetID);
-			stringBuilder.AppendLine("  Nodes: ");
-			foreach (var node in this.nodes)
-			{
-				stringBuilder.AppendLine("      " + node.parent);
-			}
-			stringBuilder.AppendLine("  Sources: ");
-			foreach (var source in this.sources)
-			{
-				stringBuilder.AppendLine("      " + source.parent);
-			}
-			return stringBuilder.ToString();
-		}
-		
 		public void MergeIntoNet(SignalNet newNet)
 		{
-			
-			foreach (var node in new List<CompSignal>(nodes))
+			foreach (var node in nodes.ListFullCopy())
 			{
 				this.DeregisterNode(node);
 				newNet.RegisterNode(node);
 			}
 		}
-		
-		public List<SignalNet> SplitNetAt(CompSignal node)
+
+		public List<SignalNet> SplitNetAt(CompSignal node,int idx)
 		{
-			
-			Log.Message(string.Format("Splitting net {0} at {1}.",this.NetID,node.parent));
+			return SplitNetAt(new SignalSubNode(node,idx));
+		}
+		public List<SignalNet> SplitNetAt(SignalSubNode node)
+		{
+			Log.Message(string.Format("Splitting net {0} at {1}.",this.NetID,node.Node.parent));
 			
 			var spawnedNets = new List<SignalNet>();
 			
@@ -150,7 +157,7 @@ namespace Signals
 			
 			for (int r = 0; r < 4; r++) {
 				var adjacentNode = node.AdjacentNode(new IntRot(r));
-				if(adjacentNode!=null && adjacentNode.connectedNet == this)
+				if(adjacentNode.Node!=null && adjacentNode.ConnectedNet == this)
 				{
 					var newNet = SignalNet.FromContiguousNodes(adjacentNode);
 					Log.Message(string.Format("Created new net {0} on {1}",newNet.NetID,new IntRot(r)));
@@ -159,15 +166,17 @@ namespace Signals
 			}
 			
 			return spawnedNets;
-			
 		}
 		 
-		public static SignalNet FromContiguousNodes(CompSignal root)
+		public static SignalNet FromContiguousNodes(CompSignal root, int idx)
 		{
+			return FromContiguousNodes(new SignalSubNode(root,idx));
+		}
+		public static SignalNet FromContiguousNodes(SignalSubNode root)
+		{
+			Log.Message(string.Format("Searching for contiguous nodes from {0}...",root.Node.parent));
 			
-			Log.Message(string.Format("Searching for contiguous nodes from {0}...",root.parent));
-			
-			var rootNet = root.connectedNet;
+			var rootNet = root.ConnectedNet;
 			
 			rootNet.DeregisterNode(root);
 			
@@ -176,9 +185,9 @@ namespace Signals
 			for (int r = 0; r < 4; r++) {
 				
 				var adjacentNode = root.AdjacentNode(new IntRot(r));
-				if(adjacentNode!=null && adjacentNode.connectedNet == rootNet)
+				if(adjacentNode.Node!=null && adjacentNode.ConnectedNet == rootNet)
 				{
-					Log.Message(string.Format("Found {0} on {1}...",adjacentNode.parent,new IntRot(r)));
+					Log.Message(string.Format("Found {0} on {1}...",adjacentNode.Node.parent,new IntRot(r)));
 					SignalNet.FromContiguousNodes(adjacentNode).MergeIntoNet(newNet);
 				}
 			}
@@ -186,7 +195,6 @@ namespace Signals
 			Log.Message(string.Format("Created net {0} with {1} nodes.",newNet.NetID,newNet.nodes.Count));
 			
 			return newNet;
-			
 		}
 
 	}

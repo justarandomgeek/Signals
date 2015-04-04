@@ -14,9 +14,7 @@ using Verse;
 
 namespace Signals
 {
-	/// <summary>
-	/// Description of SignalGrid.
-	/// </summary>
+	
 	public static class SignalGrid
 	{
 		
@@ -70,6 +68,7 @@ namespace Signals
 			DeregisterInCell(cs, cs.Position);
 		}
 		
+		
 		public static List<CompSignal> SignalListAt(IntVec3 c)
 		{
 			if (!c.InBounds())
@@ -90,15 +89,6 @@ namespace Signals
 		public static CompSignal SignalNodeAt(IntVec3 c, IntRot side)
 		{
 			return SignalListAt(c).Find(s=>s.CanConnectTo(new IntRot((side.AsInt+4-s.parent.Rotation.AsInt)%4)));
-		}
-		
-		public static IEnumerable<CompSignalSource> SignalSourcesAt(IntVec3 c)
-		{
-			foreach (var signal in SignalListAt(c)) {
-				var compSignalSource = signal as CompSignalSource;
-				if(compSignalSource != null)
-					yield return compSignalSource;
-			}
 		}
 		
 	}

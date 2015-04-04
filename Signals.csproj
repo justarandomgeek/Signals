@@ -71,6 +71,7 @@
     <Compile Include="Source\Signals.cs" />
     <Compile Include="Source\Properties\AssemblyInfo.cs" />
     <Compile Include="Source\Signals_Buildings.cs" />
+    <Compile Include="Source\Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="About" />

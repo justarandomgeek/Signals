@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 using Verse;
@@ -50,13 +51,13 @@ namespace Signals
 		{
 			base.Tick();
 			
-			if(compSignal.connectedNet == null)
+			if(compSignal.ConnectedNets[0] == null)
 			{
 				SwitchOn = false;
 			}
 			else 
 			{
-				SwitchOn = compSignal.connectedNet.CurrentSignal();
+				SwitchOn = compSignal.ConnectedNets[0].CurrentSignal();
 			}
 		}
 	}
@@ -81,11 +82,11 @@ namespace Signals
 			if(compPower.PowerNet == null)
 			{
 				Log.Message(string.Format("{0} connected PowerNet is null - Probably harmless on first tick", this));
-				compSignal.OutputSignal = false;
+				compSignal.OutputSignal[0] = false;
 				return;
 			}
 			
-			compSignal.OutputSignal = compPower.PowerNet.CurrentStoredEnergy() > 100;
+			compSignal.OutputSignal[0] = compPower.PowerNet.CurrentStoredEnergy() > 100;
 		}
 	}
 	
@@ -104,26 +105,16 @@ namespace Signals
 		{
 			base.Tick();
 			
-			compSignal.OutputSignal = Find.ThingGrid.CellContains(this.Position,EntityCategory.Item);
+			compSignal.OutputSignal[0] = Find.ThingGrid.CellContains(this.Position,EntityCategory.Item);
 		}
 	}
 	
 	public class Command_ToggleInvert : Command_Toggle
 	{
-		public Command_ToggleInvert(Building_LogicBuffer l)
+		public Command_ToggleInvert(ILogicInvertable l)
 		{
 			this.isActive = ()=>l.InvertOutput;
-			this.toggleAction = ()=>{
-				l.InvertOutput ^= true;
-			};
-		}
-		
-		public Command_ToggleInvert(Building_LogicGate l)
-		{
-			this.isActive = ()=>l.InvertOutput;
-			this.toggleAction = ()=>{
-				l.InvertOutput ^= true;
-			};
+			this.toggleAction = l.ToggleInvert;
 		}
 		
 		public override string Desc {
@@ -140,12 +131,23 @@ namespace Signals
 		
 	}
 	
-	public class Building_LogicBuffer: Building
+	
+	public interface ILogicInvertable
+	{
+		bool InvertOutput { get; set; }
+		void ToggleInvert();
+	}
+	
+	public class Building_LogicBuffer: Building, ILogicInvertable
 	{
 		CompSignalSource sigOutput;
-		CompSignalOther sigInput;
+		CompSignal sigInput;
 		
 		public bool InvertOutput { get; set; }
+		public void ToggleInvert()
+		{
+			InvertOutput ^= true;
+		}
 		
 		public override IEnumerable<Gizmo> GetGizmos()
 		{
@@ -161,15 +163,17 @@ namespace Signals
         {
             base.SpawnSetup();
             
-            sigOutput = GetComp<CompSignalSourceN>();
-            sigInput = GetComp<CompSignalOther>();
+            sigOutput = GetComp<CompSignalSource>();
+            sigInput = GetComp<CompSignal>();
         }
 		
 		public override void Tick()
 		{
 			base.Tick();
 			
-			sigOutput.OutputSignal = sigInput.connectedNet.CurrentSignal() ^ InvertOutput;
+			for (int i = 0; i < sigOutput.SignalWidth; i++) {
+				sigOutput.OutputSignal[i] = sigInput.ConnectedNets[i].CurrentSignal() ^ InvertOutput;
+			}
 		}
 	}
 		
@@ -192,7 +196,7 @@ namespace Signals
 		
 	}
 	
-	public abstract class Building_LogicGate: Building
+	public abstract class Building_LogicGate: Building, ILogicInvertable
 	{
 		CompSignalSource sigOutput;
 		CompSignal sigInA;
@@ -200,6 +204,10 @@ namespace Signals
 		CompSignal sigInC;
 		
 		public bool InvertOutput { get; set; }
+		public void ToggleInvert()
+		{
+			InvertOutput ^= true;
+		}
 		
 		protected abstract bool GateFunction(bool? A, bool? B, bool? C);
 		
@@ -217,23 +225,25 @@ namespace Signals
         {
             base.SpawnSetup();
             
-            sigOutput = GetComp<CompSignalSourceN>();
-            sigInA = GetComp<CompSignalE>();
-            sigInB = GetComp<CompSignalS>();
-            sigInC = GetComp<CompSignalW>();
+            sigOutput = this.GetSignal("OUT") as CompSignalSource;
+            sigInA = this.GetSignal("A");
+            sigInB = this.GetSignal("B");
+            sigInC = this.GetSignal("C");
         }
 		
 		public override void Tick()
 		{
 			base.Tick();
 			
-			bool? A,B,C;
-			
-			A = sigInA.connectedNet.nodes.Count>1?(bool?)sigInA.connectedNet.CurrentSignal():null;
-			B = sigInB.connectedNet.nodes.Count>1?(bool?)sigInB.connectedNet.CurrentSignal():null;
-			C = sigInC.connectedNet.nodes.Count>1?(bool?)sigInC.connectedNet.CurrentSignal():null;
-			
-			sigOutput.OutputSignal = GateFunction(A,B,C) ^ InvertOutput;
+			for (int i = 0; i < sigOutput.SignalWidth; i++) {
+				bool? A,B,C;
+				
+				A = sigInA.ConnectedNets[i].nodes.Count>1?(bool?)sigInA.ConnectedNets[i].CurrentSignal():null;
+				B = sigInB.ConnectedNets[i].nodes.Count>1?(bool?)sigInB.ConnectedNets[i].CurrentSignal():null;
+				C = sigInC.ConnectedNets[i].nodes.Count>1?(bool?)sigInC.ConnectedNets[i].CurrentSignal():null;
+				
+				sigOutput.OutputSignal[i] = GateFunction(A,B,C) ^ InvertOutput;
+			}
 		}
 	}
 }

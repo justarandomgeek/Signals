@@ -7,132 +7,106 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
-using UnityEngine;
 using Verse;
-//using Verse.AI;
-//using Verse.Sound;
-//using Verse.Noise;
-using RimWorld;
-//using RimWorld.Planet;
-//using RimWorld.SquadAI;
 
 namespace Signals
 {
-	// Sided Signals for directional devices
-	public class CompSignalSourceN:CompSignalSource
-	{
-		public override bool CanConnectTo(IntRot side)
-		{
-			return side == IntRot.north;
-		}
-	}
-	public class CompSignalN:CompSignal
-	{
-		public override bool CanConnectTo(IntRot side)
-		{
-			return side == IntRot.north;
-		}
-	}
-	public class CompSignalE:CompSignal
-	{
-		public override bool CanConnectTo(IntRot side)
-		{
-			return side == IntRot.east;
-		}
-	}
-	public class CompSignalS:CompSignal
-	{
-		public override bool CanConnectTo(IntRot side)
-		{
-			return side == IntRot.south;
-		}
-	}
-	public class CompSignalW:CompSignal
-	{
-		public override bool CanConnectTo(IntRot side)
-		{
-			return side == IntRot.west;
-		}
-	}
-	public class CompSignalNS:CompSignal
-	{
-		public override bool CanConnectTo(IntRot side)
-		{
-			return side == IntRot.north || side == IntRot.south;
-		}
-	}
-	public class CompSignalEW:CompSignal
-	{
-		public override bool CanConnectTo(IntRot side)
-		{
-			return side == IntRot.east || side == IntRot.west;
-		}
-	}
-	
-	
-	// Connect to anything not claimed by a direction piece already...
-	public class CompSignalOther:CompSignal
+	public class CompProperties_Signals : CompProperties
 	{
 		
-		public override bool CanConnectTo(IntRot side)
+		public string label;
+		public int signalWidth = 1;
+		public List<IntRot> connectSides;
+		public IntVec3 offset;
+		
+		public CompProperties_Signals()
 		{
-			switch (side.AsInt) {
-				case 0:
-					if(this.parent.GetComp<CompSignalSourceN>()!=null || 
-					   this.parent.GetComp<CompSignalN>()!=null) return false;
-					break;
-				case 1:
-					if(//this.parent.GetComp<CompSignalSourceE>()!=null || 
-					   this.parent.GetComp<CompSignalE>()!=null) return false;
-					break;
-				case 2:
-					if(//this.parent.GetComp<CompSignalSourceS>()!=null ||
-					   this.parent.GetComp<CompSignalS>()!=null) return false;
-					break;
-				case 3:
-					if(//this.parent.GetComp<CompSignalSourceW>()!=null || 
-					   this.parent.GetComp<CompSignalW>()!=null) return false;
-					break;
+			this.compClass = typeof(CompSignal);
+		}
+	}
+	
+	
+	
+	public class CompSignal: ThingComp
+	{
+		
+		CompProperties_Signals PropsSig
+		{
+			get
+			{
+				return (CompProperties_Signals)this.props;
 			}
-			
-			return true;
 		}
-	}
-	
-	public class CompSignal : ThingComp
-	{
-		public SignalNet connectedNet;
 		
-		public IntVec3 Position { get; private set; }
+		public string Label { get {return PropsSig.label;}}
+		
+		public int SignalWidth { get {return PropsSig.signalWidth;}}
+		
+		public SignalNet[] ConnectedNets { get; set; }
+		
+		public IntVec3 Position
+		{
+			get
+			{
+				return this.parent.Position + this.PropsSig.offset;
+			}
+		}
 		
 		public override string CompInspectStringExtra()
 		{
-			if(this.connectedNet == null) return "No Signal Net";
-			return string.Format("Signal Net: {0} ({1})", this.connectedNet.NetID, this.connectedNet.CurrentSignal());
+			if(ConnectedNets == null) return "No Signal Nets";
+			
+			string sides = "";
+			for (int i = 0; i < 4; i++) {
+				if(this.CanConnectTo(new IntRot(i))) sides += "NESW"[this.parent.Rotation.Rotate(i).AsInt];
+			}
+			
+			List<SignalNet> nets = new List<SignalNet>(ConnectedNets);
+			
+			return string.Join("\n", nets.ConvertAll(n=>				
+					string.Format("[{2}] Signal Net: {0} ({1})",
+			    		n.NetID,
+			    		n.CurrentSignal(),
+			    		sides
+			    	)).ToArray());
 		}
 		
 		public override void PostSpawnSetup()
 		{
 			base.PostSpawnSetup();
 			
-			TryConnectTo(IntRot.north);
-			TryConnectTo(IntRot.east);
-			TryConnectTo(IntRot.south);
-			TryConnectTo(IntRot.west);
+			ConnectedNets = new SignalNet[SignalWidth];
 			
-			if(connectedNet == null) 
-			{
-				connectedNet = new SignalNet(new List<CompSignal>{this});
-				Log.Message(string.Format("Node {0} found no adjacent net, created net {1}",this.parent,connectedNet.NetID));
+			foreach (var r in PropsSig.connectSides??new List<int>{0,1,2,3}.ConvertAll(i=>new IntRot(i)) ) {
+				Log.Message(string.Format("{0} trying to connect on {1}",this.parent,r));
 				
+				var otherNode = AdjacentNode(r);
+				
+				if(otherNode!=null)
+				{
+					if(otherNode.ConnectedNets != null)
+					{
+						this.ConnectToNets(otherNode.ConnectedNets);
+					}
+					else
+					{
+						Log.Warning(string.Format("Adjacent node {0} has null netlist!",otherNode.parent));
+					}
+				}
 			}
 			
-			this.Position = this.parent.Position;
+			for (int i = 0; i < SignalWidth; i++) {
+				if(ConnectedNets[i]==null)
+				{
+					ConnectedNets[i] = new SignalNet(this,i);
+					Log.Message(string.Format("Created net {0} on {1}",ConnectedNets[i].NetID,i));
+				}
+			}
 			
 			SignalGrid.Register(this);
-			
 		}
 		
 		public override void PostDeSpawn()
@@ -141,66 +115,64 @@ namespace Signals
 			
 			SignalGrid.Deregister(this);
 			
-			connectedNet.SplitNetAt(this);
+			for (int i = 0; i < SignalWidth; i++) {
+				ConnectedNets[i].SplitNetAt(this,i);
+			}
 		}
 		
 		public virtual bool CanConnectTo(IntRot side)
 		{
-			//TODO: make variations that allow one-side or two-side (maybe 3-side too?) connections
-			//TODO: account for rotated parent Thing also
-			return true;
-			
+			return this.PropsSig.connectSides == null || this.PropsSig.connectSides.Contains(side);
 		}
 		
 		public CompSignal AdjacentNode(IntRot side)
 		{
 			if(!CanConnectTo(side)) return null;
 			
-			IntRot absSide= new IntRot((side.AsInt + this.parent.Rotation.AsInt)%4);
-			
-			return SignalGrid.SignalNodeAt(this.parent.Position + absSide.FacingSquare,new IntRot((absSide.AsInt+2)%4));
+			IntRot absSide = side.Rotate(parent.Rotation);
+						
+			return SignalGrid.SignalNodeAt(this.Position + absSide.FacingSquare,absSide.Rotate(2));
 		}
 		
-		internal void ConnectToNet(SignalNet net)
+		internal void ConnectToNets(SignalNet[] nets)
 		{
-			if(this.connectedNet == null)
-			{
-				net.RegisterNode(this);
-			} else {
-				Log.Message(string.Format("Merging Net {0} into Net {1}.",connectedNet.NetID,net.NetID));
-				connectedNet.MergeIntoNet(net);
-			}
-		}
-		
-		public void TryConnectTo(IntRot rot)
-		{
-			Log.Message(string.Format("{0} trying to connect on {1}",this.parent,rot));
-			var otherNode = AdjacentNode(rot);
+			if( nets.Length != SignalWidth)
+				Log.Message(string.Format("ConnectToNets with {0} nets. Expecting {1}", nets.Length, SignalWidth));
 			
-			if(otherNode!=null)
-			{
-				if(otherNode.connectedNet != null)
+			for (int i = 0; i < SignalWidth; i++) {
+				if(this.ConnectedNets[i] == null)
 				{
-					this.ConnectToNet(otherNode.connectedNet);
-					Log.Message(string.Format("Connected to net {0}",this.connectedNet.NetID));
-				}
-				else 	
-				{
-					Log.Warning(string.Format("Adjacent node {0} has null net!",otherNode.parent));
+					nets[i].RegisterNode(this,i);
+					
+				} else {
+					Log.Message(string.Format("Merging Net {0} into Net {1}.",ConnectedNets[i].NetID,nets[i].NetID));
+					ConnectedNets[i].MergeIntoNet(nets[i]);
 				}
 			}
 		}
-		
 	}
 	
 	public class CompSignalSource : CompSignal
 	{
-		public bool OutputSignal;
+		public BitArray OutputSignal {get;set;}
+		
+		
+		public override void PostSpawnSetup()
+		{
+			base.PostSpawnSetup();
+			
+			OutputSignal = new BitArray(SignalWidth);
+		}
 		
 		public override string CompInspectStringExtra()
 		{
-			if(this.connectedNet == null) return "No Signal Net";
-			return string.Format("Output: {2}\nSignal Net: {0} ({1})", this.connectedNet.NetID, this.connectedNet.CurrentSignal(),OutputSignal);
+			if(this.ConnectedNets[0] == null) return "No Signal Net";
+			
+			var output = new int[1];
+			
+			OutputSignal.CopyTo(output,0);
+						
+			return string.Format("Output: {1:X}\n{0}", base.CompInspectStringExtra(),output[0]);
 		}
 	}
 }

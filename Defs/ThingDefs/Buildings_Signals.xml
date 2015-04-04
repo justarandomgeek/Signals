@@ -46,8 +46,9 @@
       <Steel>1</Steel>
     </costList>
     <comps>
-      <li>
+      <li Class="Signals.CompProperties_Signals">
         <compClass>Signals.CompSignal</compClass>
+    	<signalWidth>1</signalWidth>
       </li>
     </comps>
     <rotatable>false</rotatable>
@@ -95,8 +96,9 @@
         <compClass>CompPowerTransmitter</compClass>
         <transmitsPower>true</transmitsPower>
       </li>
-  	  <li>
-        <compClass>Signals.CompSignal</compClass>
+  	  <li Class="Signals.CompProperties_Signals">
+    	<signalWidth>1</signalWidth>
+      	<compClass>Signals.CompSignal</compClass>
       </li>
     </comps>
     <rotatable>false</rotatable>
@@ -140,7 +142,8 @@
         <compClass>CompPowerTransmitter</compClass>
         <transmitsPower>true</transmitsPower>
       </li>
-  	  <li>
+  	  <li Class="Signals.CompProperties_Signals">
+    	<signalWidth>1</signalWidth>
         <compClass>Signals.CompSignalSource</compClass>
       </li>
     </comps>
@@ -181,7 +184,8 @@
       <Steel>25</Steel>
     </costList>
     <comps>
-      <li>
+      <li Class="Signals.CompProperties_Signals">
+    	<signalWidth>1</signalWidth>
         <compClass>Signals.CompSignalSource</compClass>
       </li>
     </comps>
@@ -222,17 +226,29 @@
       <Steel>25</Steel>
     </costList>
     <comps>
-      <li>
-        <compClass>Signals.CompSignalSourceN</compClass>
+      <li Class="Signals.CompProperties_Signals">
+    	<signalWidth>1</signalWidth>
+        <connectSides><li>0</li></connectSides>
+      	<label>OUT</label>
+    	<compClass>Signals.CompSignalSource</compClass>
       </li>
-      <li>
-    	<compClass>Signals.CompSignalE</compClass>
+      <li Class="Signals.CompProperties_Signals">
+    	<signalWidth>1</signalWidth>
+      	<connectSides><li>1</li></connectSides>
+      	<label>A</label>
+    	<compClass>Signals.CompSignal</compClass>
       </li>
-      <li>
-    	<compClass>Signals.CompSignalS</compClass>
+      <li Class="Signals.CompProperties_Signals">
+    	<signalWidth>1</signalWidth>
+    	<connectSides><li>2</li></connectSides>
+      	<label>B</label>
+    	<compClass>Signals.CompSignal</compClass>
       </li>
-      <li>
-    	<compClass>Signals.CompSignalW</compClass>
+      <li Class="Signals.CompProperties_Signals">
+    	<signalWidth>1</signalWidth>
+    	<connectSides><li>3</li></connectSides>
+      	<label>C</label>
+    	<compClass>Signals.CompSignal</compClass>
       </li>
     </comps>
     <rotatable>true</rotatable>
@@ -272,17 +288,29 @@
       <Steel>25</Steel>
     </costList>
     <comps>
-      <li>
-        <compClass>Signals.CompSignalSourceN</compClass>
+      <li Class="Signals.CompProperties_Signals">
+    	<signalWidth>1</signalWidth>
+        <connectSides><li>0</li></connectSides>
+      	<label>OUT</label>
+    	<compClass>Signals.CompSignalSource</compClass>
       </li>
-      <li>
-    	<compClass>Signals.CompSignalE</compClass>
+      <li Class="Signals.CompProperties_Signals">
+    	<signalWidth>1</signalWidth>
+      	<connectSides><li>1</li></connectSides>
+      	<label>A</label>
+    	<compClass>Signals.CompSignal</compClass>
       </li>
-      <li>
-    	<compClass>Signals.CompSignalS</compClass>
+      <li Class="Signals.CompProperties_Signals">
+    	<signalWidth>1</signalWidth>
+    	<connectSides><li>2</li></connectSides>
+      	<label>B</label>
+    	<compClass>Signals.CompSignal</compClass>
       </li>
-      <li>
-    	<compClass>Signals.CompSignalW</compClass>
+      <li Class="Signals.CompProperties_Signals">
+    	<signalWidth>1</signalWidth>
+    	<connectSides><li>3</li></connectSides>
+      	<label>C</label>
+    	<compClass>Signals.CompSignal</compClass>
       </li>
     </comps>
     <rotatable>true</rotatable>
@@ -322,11 +350,15 @@
       <Steel>25</Steel>
     </costList>
     <comps>
-      <li>
-        <compClass>Signals.CompSignalSourceN</compClass>
+      <li Class="Signals.CompProperties_Signals">
+    	<signalWidth>1</signalWidth>
+      	<connectSides><li>0</li></connectSides>
+        <compClass>Signals.CompSignalSource</compClass>
       </li>
-      <li>
-    	<compClass>Signals.CompSignalOther</compClass>
+      <li Class="Signals.CompProperties_Signals">
+    	<signalWidth>1</signalWidth>
+      	<connectSides><li>1</li><li>2</li><li>3</li></connectSides>
+    	<compClass>Signals.CompSignal</compClass>
       </li>
     </comps>
     <rotatable>true</rotatable>
@@ -366,11 +398,15 @@
       <Steel>25</Steel>
     </costList>
     <comps>
-      <li>
-        <compClass>Signals.CompSignalNS</compClass>
+      <li Class="Signals.CompProperties_Signals">
+    	<signalWidth>1</signalWidth>
+    	<connectSides><li>0</li><li>2</li></connectSides>
+      	<compClass>Signals.CompSignal</compClass>
       </li>
-      <li>
-    	<compClass>Signals.CompSignalEW</compClass>
+      <li Class="Signals.CompProperties_Signals">
+    	<signalWidth>1</signalWidth>
+      	<connectSides><li>1</li><li>3</li></connectSides>
+    	<compClass>Signals.CompSignal</compClass>
       </li>
     </comps>
     <rotatable>false</rotatable>
