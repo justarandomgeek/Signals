@@ -34,7 +34,7 @@ namespace Signals
 		}
 		
 		public SignalNet ConnectedNet { get { return Node.ConnectedNets[Index]; } }
-		public SignalSubNode AdjacentNode(IntRot r)
+		public SignalSubNode AdjacentNode(Rot4 r)
 		{
 			return new SignalSubNode(Node.AdjacentNode(r),Index);
 		}
@@ -156,11 +156,11 @@ namespace Signals
 			if(this.nodes.Count == 0) return spawnedNets;
 			
 			for (int r = 0; r < 4; r++) {
-				var adjacentNode = node.AdjacentNode(new IntRot(r));
+				var adjacentNode = node.AdjacentNode(new Rot4(r));
 				if(adjacentNode.Node!=null && adjacentNode.ConnectedNet == this)
 				{
 					var newNet = SignalNet.FromContiguousNodes(adjacentNode);
-					Log.Message(string.Format("Created new net {0} on {1}",newNet.NetID,new IntRot(r)));
+					Log.Message(string.Format("Created new net {0} on {1}",newNet.NetID,new Rot4(r)));
 					spawnedNets.Add(newNet);
 				}
 			}
@@ -184,10 +184,10 @@ namespace Signals
 			
 			for (int r = 0; r < 4; r++) {
 				
-				var adjacentNode = root.AdjacentNode(new IntRot(r));
+				var adjacentNode = root.AdjacentNode(new Rot4(r));
 				if(adjacentNode.Node!=null && adjacentNode.ConnectedNet == rootNet)
 				{
-					Log.Message(string.Format("Found {0} on {1}...",adjacentNode.Node.parent,new IntRot(r)));
+					Log.Message(string.Format("Found {0} on {1}...",adjacentNode.Node.parent,new Rot4(r)));
 					SignalNet.FromContiguousNodes(adjacentNode).MergeIntoNet(newNet);
 				}
 			}

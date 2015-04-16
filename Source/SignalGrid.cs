@@ -86,9 +86,9 @@ namespace Signals
 			}
 		}
 		
-		public static CompSignal SignalNodeAt(IntVec3 c, IntRot side)
+		public static CompSignal SignalNodeAt(IntVec3 c, Rot4 side)
 		{
-			return SignalListAt(c).Find(s=>s.CanConnectTo(new IntRot((side.AsInt+4-s.parent.Rotation.AsInt)%4)));
+			return SignalListAt(c).Find(s=>s.CanConnectTo(new Rot4((side.AsInt+4-s.parent.Rotation.AsInt)%4)));
 		}
 		
 	}

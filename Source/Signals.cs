@@ -19,7 +19,7 @@ namespace Signals
 		
 		public string label;
 		public int signalWidth = 1;
-		public List<IntRot> connectSides;
+		public List<Rot4> connectSides;
 		public IntVec3 offset;
 		
 		public CompProperties_Signals()
@@ -61,7 +61,7 @@ namespace Signals
 			
 			string sides = "";
 			for (int i = 0; i < 4; i++) {
-				if(this.CanConnectTo(new IntRot(i))) sides += "NESW"[this.parent.Rotation.Rotate(i).AsInt];
+				if(this.CanConnectTo(new Rot4(i))) sides += "NESW"[this.parent.Rotation.Rotate(i).AsInt];
 			}
 			
 			List<SignalNet> nets = new List<SignalNet>(ConnectedNets);
@@ -80,7 +80,7 @@ namespace Signals
 			
 			ConnectedNets = new SignalNet[SignalWidth];
 			
-			foreach (var r in PropsSig.connectSides??new List<int>{0,1,2,3}.ConvertAll(i=>new IntRot(i)) ) {
+			foreach (var r in PropsSig.connectSides??new List<int>{0,1,2,3}.ConvertAll(i=>new Rot4(i)) ) {
 				Log.Message(string.Format("{0} trying to connect on {1}",this.parent,r));
 				
 				var otherNode = AdjacentNode(r);
@@ -120,18 +120,18 @@ namespace Signals
 			}
 		}
 		
-		public virtual bool CanConnectTo(IntRot side)
+		public virtual bool CanConnectTo(Rot4 side)
 		{
 			return this.PropsSig.connectSides == null || this.PropsSig.connectSides.Contains(side);
 		}
 		
-		public CompSignal AdjacentNode(IntRot side)
+		public CompSignal AdjacentNode(Rot4 side)
 		{
 			if(!CanConnectTo(side)) return null;
 			
-			IntRot absSide = side.Rotate(parent.Rotation);
+			Rot4 absSide = side.Rotate(parent.Rotation);
 						
-			return SignalGrid.SignalNodeAt(this.Position + absSide.FacingSquare,absSide.Rotate(2));
+			return SignalGrid.SignalNodeAt(this.Position + absSide.FacingCell,absSide.Rotate(2));
 		}
 		
 		internal void ConnectToNets(SignalNet[] nets)
