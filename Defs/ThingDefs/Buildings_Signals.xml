@@ -15,7 +15,6 @@
 
   <ThingDef ParentName="BuildingBase">
   	<defName>SignalConduit</defName>
-    <eType>Building_PowerConduit</eType>
     <label>signal conduit</label>
     <thingClass>Signals.Building_SignalConduit</thingClass>
     <linkDrawerType>Basic</linkDrawerType>
@@ -35,7 +34,7 @@
     <passability>Standable</passability>
     <leaveResourcesWhenKilled>false</leaveResourcesWhenKilled>
     <statBases>
-      <MaxHealth>80</MaxHealth>
+      <MaxHitPoints>80</MaxHitPoints>
       <WorkToMake>35</WorkToMake>
       <Flammability>1.0</Flammability>
       <Beauty>-2</Beauty>
@@ -65,14 +64,13 @@
 
   <ThingDef ParentName="BuildingBase">
     <defName>PowerRelay</defName>
-    <eType>Building_PowerConduit</eType>
     <label>power relay</label>
     <thingClass>Signals.Building_PowerRelay</thingClass>
     <category>Building</category>
     <description>Switches power on/off controlled by a signal.</description>
     <graphicPath>Things/Building/Power/PowerSwitch_On</graphicPath>
     <graphicClass>Graphic_Single</graphicClass>
-    <shaderType>Transparent</shaderType>
+    <graphicShaderType>Transparent</graphicShaderType>
     <building>
       <ignoreNeedsPower>true</ignoreNeedsPower>
       <isEdifice>true</isEdifice>
@@ -82,7 +80,7 @@
     <passability>Standable</passability>
     <leaveResourcesWhenKilled>false</leaveResourcesWhenKilled>
     <statBases>
-      <MaxHealth>120</MaxHealth>
+      <MaxHitPoints>120</MaxHitPoints>
       <WorkToMake>200</WorkToMake>
       <Flammability>0.4</Flammability>
       <Beauty>-2</Beauty>
@@ -111,14 +109,13 @@
 	
   <ThingDef ParentName="BuildingBase">
     <defName>PowerSensor</defName>
-    <eType>Building_PowerConduit</eType>
     <label>power sensor</label>
     <thingClass>Signals.Building_PowerSensor</thingClass>
     <category>Building</category>
     <description>Sends a signal based on the power level in a power circuit.</description>
     <graphicPath>Things/Building/Power/PowerSwitch_On</graphicPath>
     <graphicClass>Graphic_Single</graphicClass>
-    <shaderType>Transparent</shaderType>
+    <graphicShaderType>Transparent</graphicShaderType>
     <building>
       <ignoreNeedsPower>true</ignoreNeedsPower>
       <isEdifice>true</isEdifice>
@@ -128,7 +125,7 @@
     <passability>Standable</passability>
     <leaveResourcesWhenKilled>false</leaveResourcesWhenKilled>
     <statBases>
-      <MaxHealth>120</MaxHealth>
+      <MaxHitPoints>120</MaxHitPoints>
       <WorkToMake>200</WorkToMake>
       <Flammability>0.4</Flammability>
       <Beauty>-2</Beauty>
@@ -157,14 +154,13 @@
 
 <ThingDef ParentName="BuildingBase">
     <defName>PressurePlate</defName>
-    <eType>Building_PowerConduit</eType>
     <label>pressure plate</label>
     <thingClass>Signals.Building_PressurePlate</thingClass>
     <category>Building</category>
     <description>Sends a signal based on the items piled on top of it.</description>
     <graphicPath>Terrain/Surfaces/MetalTile</graphicPath>
     <graphicClass>Graphic_Single</graphicClass>
-    <shaderType>Transparent</shaderType>
+    <graphicShaderType>Transparent</graphicShaderType>
     <building>
       <ignoreNeedsPower>true</ignoreNeedsPower>
       <isEdifice>true</isEdifice>
@@ -174,7 +170,7 @@
     <passability>Standable</passability>
     <leaveResourcesWhenKilled>false</leaveResourcesWhenKilled>
     <statBases>
-      <MaxHealth>120</MaxHealth>
+      <MaxHitPoints>120</MaxHitPoints>
       <WorkToMake>200</WorkToMake>
       <Flammability>0.4</Flammability>
       <Beauty>-2</Beauty>
@@ -199,14 +195,13 @@
 
 <ThingDef ParentName="BuildingBase">
     <defName>LogicGateAND</defName>
-    <eType>Building_PowerConduit</eType>
     <label>AND gate</label>
     <thingClass>Signals.Building_LogicGateAND</thingClass>
     <category>Building</category>
     <description>Outputs the Logical AND of any connected signals</description>
     <graphicPath>Things/Signals/LogicGateAND</graphicPath>
     <graphicClass>Graphic_Single</graphicClass>
-    <shaderType>Transparent</shaderType>
+    <graphicShaderType>Transparent</graphicShaderType>
     <building>
       <ignoreNeedsPower>true</ignoreNeedsPower>
       <isEdifice>true</isEdifice>
@@ -216,7 +211,7 @@
     <passability>Standable</passability>
     <leaveResourcesWhenKilled>false</leaveResourcesWhenKilled>
     <statBases>
-      <MaxHealth>120</MaxHealth>
+      <MaxHitPoints>120</MaxHitPoints>
       <WorkToMake>200</WorkToMake>
       <Flammability>0.4</Flammability>
       <Beauty>-2</Beauty>
@@ -261,14 +256,13 @@
 
   <ThingDef ParentName="BuildingBase">
     <defName>LogicGateXOR</defName>
-    <eType>Building_PowerConduit</eType>
     <label>XOR gate</label>
     <thingClass>Signals.Building_LogicGateXOR</thingClass>
     <category>Building</category>
     <description>Outputs the Logical XOR of any connected signals</description>
     <graphicPath>Things/Signals/LogicGateXOR</graphicPath>
     <graphicClass>Graphic_Single</graphicClass>
-    <shaderType>Transparent</shaderType>
+    <graphicShaderType>Transparent</graphicShaderType>
     <building>
       <ignoreNeedsPower>true</ignoreNeedsPower>
       <isEdifice>true</isEdifice>
@@ -278,7 +272,7 @@
     <passability>Standable</passability>
     <leaveResourcesWhenKilled>false</leaveResourcesWhenKilled>
     <statBases>
-      <MaxHealth>120</MaxHealth>
+      <MaxHitPoints>120</MaxHitPoints>
       <WorkToMake>200</WorkToMake>
       <Flammability>0.4</Flammability>
       <Beauty>-2</Beauty>
@@ -323,14 +317,13 @@
 
   <ThingDef ParentName="BuildingBase">
     <defName>LogicBuffer</defName>
-    <eType>Building_PowerConduit</eType>
     <label>logic buffer</label>
     <thingClass>Signals.Building_LogicBuffer</thingClass>
     <category>Building</category>
     <description>Buffers the transmission of a signal from one net to another. This is a one-way gate.</description>
     <graphicPath>Things/Signals/LogicBuffer</graphicPath>
     <graphicClass>Graphic_Single</graphicClass>
-    <shaderType>Transparent</shaderType>
+    <graphicShaderType>Transparent</graphicShaderType>
     <building>
       <ignoreNeedsPower>true</ignoreNeedsPower>
       <isEdifice>true</isEdifice>
@@ -340,7 +333,7 @@
     <passability>Standable</passability>
     <leaveResourcesWhenKilled>false</leaveResourcesWhenKilled>
     <statBases>
-      <MaxHealth>120</MaxHealth>
+      <MaxHitPoints>120</MaxHitPoints>
       <WorkToMake>200</WorkToMake>
       <Flammability>0.4</Flammability>
       <Beauty>-2</Beauty>
@@ -371,14 +364,13 @@
 
   <ThingDef ParentName="BuildingBase">
     <defName>SignalCrossover</defName>
-    <eType>Building_PowerConduit</eType>
     <label>Signal Crossover</label>
     <thingClass>Building</thingClass>
     <category>Building</category>
     <description>Allows signals to cross over each other.</description>
     <graphicPath>Things/Signals/Crossover</graphicPath>
     <graphicClass>Graphic_Single</graphicClass>
-    <shaderType>Transparent</shaderType>
+    <graphicShaderType>Transparent</graphicShaderType>
     <building>
       <ignoreNeedsPower>true</ignoreNeedsPower>
       <isEdifice>true</isEdifice>
@@ -388,7 +380,7 @@
     <passability>Standable</passability>
     <leaveResourcesWhenKilled>false</leaveResourcesWhenKilled>
     <statBases>
-      <MaxHealth>120</MaxHealth>
+      <MaxHitPoints>120</MaxHitPoints>
       <WorkToMake>200</WorkToMake>
       <Flammability>0.4</Flammability>
       <Beauty>-2</Beauty>
