@@ -38,7 +38,7 @@
     <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <StartAction>Program</StartAction>
-    <StartProgram>..\..\RimWorld778Win.exe</StartProgram>
+    <StartProgram>..\..\RimWorld779Win.exe</StartProgram>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <DebugSymbols>False</DebugSymbols>
@@ -49,7 +49,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\RimWorld778Win_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\RimWorld779Win_Data\Managed\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -61,7 +61,7 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\RimWorld778Win_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\RimWorld779Win_Data\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
