@@ -22,29 +22,11 @@ using RimWorld;
 
 namespace Signals
 {
-	public struct SignalSubNode
-	{
-		public readonly CompSignal Node;
-		public readonly int Index;
-		
-		public SignalSubNode(CompSignal node, int idx)
-		{
-			this.Node = node;
-			this.Index = idx;
-		}
-		
-		public SignalNet ConnectedNet { get { return Node.ConnectedNets[Index]; } }
-		public SignalSubNode AdjacentNode(Rot4 r)
-		{
-			return new SignalSubNode(Node.AdjacentNode(r),Index);
-		}
-	}
-	
 	public class SignalNet
 	{
 		private static int lastID;
 		
-		public List<SignalSubNode> nodes = new List<SignalSubNode>();
+		public List<CompSignal.SubNode> nodes = new List<CompSignal.SubNode>();
 		public List<Tuple<CompSignalSource,int>> sources = new List<Tuple<CompSignalSource,int>>();
 		public int NetID { get; private set; }
 		
@@ -54,7 +36,7 @@ namespace Signals
 			NetID = lastID++;
 		}
 		
-		public SignalNet(IEnumerable<SignalSubNode> newNodes) : this()
+		public SignalNet(IEnumerable<CompSignal.SubNode> newNodes) : this()
 		{
 			foreach (var node in newNodes) {
 				RegisterNode(node);
@@ -62,10 +44,9 @@ namespace Signals
 			
 		}
 		
-		public SignalNet(SignalSubNode newNode) : this(new List<SignalSubNode>{newNode}){}
-		public SignalNet(CompSignal newNode,int idx) : this(new SignalSubNode(newNode,idx)){}
+		public SignalNet(CompSignal.SubNode newNode) : this(new List<CompSignal.SubNode>{newNode}){}
 		
-		public void RegisterNode(SignalSubNode node)
+		public void RegisterNode(CompSignal.SubNode node)
 		{
 			RegisterNode(node.Node,node.Index);
 		}
@@ -89,7 +70,7 @@ namespace Signals
 				
 			
 			// register the new node
-			this.nodes.Add(new SignalSubNode(node,idx));
+			this.nodes.Add(node[idx]);
 			
 			// inform the node of it's new Net
 			node.ConnectedNets[idx] = this;
@@ -103,14 +84,14 @@ namespace Signals
 			
 		}		
 		
-		public void DeregisterNode(SignalSubNode node)
+		public void DeregisterNode(CompSignal.SubNode node)
 		{
 			DeregisterNode(node.Node,node.Index);
 		}
 		public void DeregisterNode(CompSignal node, int idx)
 		{
 			// register the new node
-			this.nodes.Remove(new SignalSubNode(node,idx));
+			this.nodes.Remove(node[idx]);
 			
 			// inform the node of it's new Net
 			node.ConnectedNets[idx] = null;
@@ -141,11 +122,7 @@ namespace Signals
 			}
 		}
 
-		public List<SignalNet> SplitNetAt(CompSignal node,int idx)
-		{
-			return SplitNetAt(new SignalSubNode(node,idx));
-		}
-		public List<SignalNet> SplitNetAt(SignalSubNode node)
+		public List<SignalNet> SplitNetAt(CompSignal.SubNode node)
 		{
 			Log.Message(string.Format("Splitting net {0} at {1}.",this.NetID,node.Node.parent));
 			
@@ -155,12 +132,10 @@ namespace Signals
 			
 			if(this.nodes.Count == 0) return spawnedNets;
 			
-			for (int r = 0; r < 4; r++) {
-				var adjacentNode = node.AdjacentNode(new Rot4(r));
+			foreach (var adjacentNode in node.AdjacentNodes()) {
 				if(adjacentNode.Node!=null && adjacentNode.ConnectedNet == this)
 				{
 					var newNet = SignalNet.FromContiguousNodes(adjacentNode);
-					Log.Message(string.Format("Created new net {0} on {1}",newNet.NetID,new Rot4(r)));
 					spawnedNets.Add(newNet);
 				}
 			}
@@ -168,11 +143,7 @@ namespace Signals
 			return spawnedNets;
 		}
 		 
-		public static SignalNet FromContiguousNodes(CompSignal root, int idx)
-		{
-			return FromContiguousNodes(new SignalSubNode(root,idx));
-		}
-		public static SignalNet FromContiguousNodes(SignalSubNode root)
+		public static SignalNet FromContiguousNodes(CompSignal.SubNode root)
 		{
 			Log.Message(string.Format("Searching for contiguous nodes from {0}...",root.Node.parent));
 			
@@ -182,12 +153,9 @@ namespace Signals
 			
 			var newNet = new SignalNet(root);
 			
-			for (int r = 0; r < 4; r++) {
-				
-				var adjacentNode = root.AdjacentNode(new Rot4(r));
+			foreach (var adjacentNode in root.AdjacentNodes()) {
 				if(adjacentNode.Node!=null && adjacentNode.ConnectedNet == rootNet)
 				{
-					Log.Message(string.Format("Found {0} on {1}...",adjacentNode.Node.parent,new Rot4(r)));
 					SignalNet.FromContiguousNodes(adjacentNode).MergeIntoNet(newNet);
 				}
 			}

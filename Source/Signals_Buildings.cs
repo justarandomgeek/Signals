@@ -7,23 +7,6 @@ using RimWorld;
 
 namespace Signals
 {
-	public class Building_SignalConduit : Building
-	{
-		
-        CompSignal compSignal;
-        	
-		/// <summary>
-        /// Do something after the object is spawned
-        /// </summary>
-        public override void SpawnSetup()
-        {
-            base.SpawnSetup();
-            
-            compSignal = GetComp<CompSignal>();
-        }
-        
-	}
-	
 	public class Building_PowerRelay : RimWorld.Building_PowerSwitch
 	{
 		
@@ -136,6 +119,43 @@ namespace Signals
 	{
 		bool InvertOutput { get; set; }
 		void ToggleInvert();
+	}
+	
+	public class Building_MuxDemux: Building
+	{
+		public override IEnumerable<Gizmo> GetGizmos()
+		{
+			foreach (var gizmo in base.GetGizmos()) {
+				yield return gizmo;
+			}
+		}
+		
+		public override void SpawnSetup()
+        {
+            base.SpawnSetup();
+            
+            var wide = this.GetSignal("WIDE");
+            var a = this.GetSignal("A");
+            var b = this.GetSignal("B");
+            var c = this.GetSignal("C");
+            
+            if(this.Rotation == Rot4.North || this.Rotation == Rot4.East)
+            {
+            	for (int i = 0; i < a.SignalWidth; i++) {
+            		CompSignal.RegisterBridge(new SignalBridge{wide[i]						,a[i]});
+            		CompSignal.RegisterBridge(new SignalBridge{wide[i+a.SignalWidth]		,b[i]});
+            		CompSignal.RegisterBridge(new SignalBridge{wide[i+(2*a.SignalWidth)]	,c[i]});
+            	}
+            }
+            else
+            {
+            	for (int i = 0; i < a.SignalWidth; i++) {
+            		CompSignal.RegisterBridge(new SignalBridge{wide[i]						,c[i]});	
+            		CompSignal.RegisterBridge(new SignalBridge{wide[i+a.SignalWidth]		,b[i]});
+            		CompSignal.RegisterBridge(new SignalBridge{wide[i+(2*a.SignalWidth)]	,a[i]});
+            	}
+            }
+        }
 	}
 	
 	public class Building_LogicBuffer: Building, ILogicInvertable

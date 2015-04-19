@@ -28,10 +28,59 @@ namespace Signals
 		}
 	}
 	
-	
+	public class SignalBridge : List<CompSignal.SubNode>
+	{
+		static int nextID;
+		
+		public int id = nextID++;
+	}
 	
 	public class CompSignal: ThingComp
 	{
+		public struct SubNode
+		{
+			public readonly CompSignal Node;
+			public readonly int Index;
+			
+			public SubNode(CompSignal node, int idx)
+			{
+				this.Node = node;
+				this.Index = idx;
+			}
+			
+			public SignalNet ConnectedNet { get { return Node.ConnectedNets[Index]; } }
+			
+			public IEnumerable<SubNode> AdjacentNodes()
+			{
+				foreach (var r in Node.PropsSig.connectSides??new List<int>{0,1,2,3}.ConvertAll(i=>new Rot4(i)) ) {
+					var node = Node.AdjacentNode(r);
+					if(node != null) yield return node[Index];
+				}
+				
+				var thisNode = this;
+				var bridge = signalBridges.Find(sb=>sb.Contains(thisNode));
+				if(bridge!=null)
+				{
+					foreach (var subnode in bridge) {
+						yield return subnode;
+					}
+				}				
+			}
+		}
+		
+		private static List<SignalBridge> signalBridges = new List<SignalBridge>();
+		
+		public static void RegisterBridge(SignalBridge sb)
+		{
+			signalBridges.Add(sb);
+			var basenet = sb[0].ConnectedNet;
+			foreach (var node in sb) {
+				if(node.ConnectedNet != basenet)
+				{
+					node.ConnectedNet.MergeIntoNet(basenet);
+				}
+			}
+		}
 		
 		CompProperties_Signals PropsSig
 		{
@@ -55,6 +104,14 @@ namespace Signals
 			}
 		}
 		
+		public SubNode this[int idx]
+		{
+			get
+			{
+				return new SubNode(this,idx);
+			}
+		}
+		
 		public override string CompInspectStringExtra()
 		{
 			if(ConnectedNets == null) return "No Signal Nets";
@@ -66,12 +123,9 @@ namespace Signals
 			
 			List<SignalNet> nets = new List<SignalNet>(ConnectedNets);
 			
-			return string.Join("\n", nets.ConvertAll(n=>				
-					string.Format("[{2}] Signal Net: {0} ({1})",
-			    		n.NetID,
-			    		n.CurrentSignal(),
-			    		sides
-			    	)).ToArray());
+			return string.Format("{0} Nets: {1}",
+			                     sides,
+			                     string.Join("/", nets.ConvertAll(n=>n.NetID.ToString()).ToArray()));
 		}
 		
 		public override void PostSpawnSetup()
@@ -81,7 +135,6 @@ namespace Signals
 			ConnectedNets = new SignalNet[SignalWidth];
 			
 			foreach (var r in PropsSig.connectSides??new List<int>{0,1,2,3}.ConvertAll(i=>new Rot4(i)) ) {
-				Log.Message(string.Format("{0} trying to connect on {1}",this.parent,r));
 				
 				var otherNode = AdjacentNode(r);
 				
@@ -101,7 +154,7 @@ namespace Signals
 			for (int i = 0; i < SignalWidth; i++) {
 				if(ConnectedNets[i]==null)
 				{
-					ConnectedNets[i] = new SignalNet(this,i);
+					ConnectedNets[i] = new SignalNet(this[i]);
 					Log.Message(string.Format("Created net {0} on {1}",ConnectedNets[i].NetID,i));
 				}
 			}
@@ -115,8 +168,17 @@ namespace Signals
 			
 			SignalGrid.Deregister(this);
 			
+			var bridges = signalBridges.FindAll(sb=> sb.FindAll(n=>n.Node==this).Count == 0);
+			foreach(var bridge in bridges)
+			{
+				bridge.RemoveAll(n=>n.Node==this);
+				
+				if(bridge.Count <2) signalBridges.Remove(bridge);
+			}
+				
+			
 			for (int i = 0; i < SignalWidth; i++) {
-				ConnectedNets[i].SplitNetAt(this,i);
+				ConnectedNets[i].SplitNetAt(this[i]);
 			}
 		}
 		
@@ -125,7 +187,7 @@ namespace Signals
 			return this.PropsSig.connectSides == null || this.PropsSig.connectSides.Contains(side);
 		}
 		
-		public CompSignal AdjacentNode(Rot4 side)
+		CompSignal AdjacentNode(Rot4 side)
 		{
 			if(!CanConnectTo(side)) return null;
 			
