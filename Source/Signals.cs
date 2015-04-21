@@ -54,7 +54,7 @@ namespace Signals
 			{
 				foreach (var r in Node.PropsSig.connectSides??new List<int>{0,1,2,3}.ConvertAll(i=>new Rot4(i)) ) {
 					var node = Node.AdjacentNode(r);
-					if(node != null) yield return node[Index];
+					if(node != null && node.SignalWidth == Node.SignalWidth) yield return node[Index];
 				}
 				
 				var thisNode = this;
@@ -138,16 +138,9 @@ namespace Signals
 				
 				var otherNode = AdjacentNode(r);
 				
-				if(otherNode!=null)
+				if(otherNode!=null && otherNode.SignalWidth == SignalWidth)
 				{
-					if(otherNode.ConnectedNets != null)
-					{
-						this.ConnectToNets(otherNode.ConnectedNets);
-					}
-					else
-					{
-						Log.Warning(string.Format("Adjacent node {0} has null netlist!",otherNode.parent));
-					}
+					ConnectToNets(otherNode.ConnectedNets);
 				}
 			}
 			
