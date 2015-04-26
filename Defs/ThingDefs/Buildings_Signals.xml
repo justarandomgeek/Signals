@@ -12,10 +12,9 @@
     <leaveResourcesWhenKilled>true</leaveResourcesWhenKilled>
     <filthLeaving>BuildingRubble</filthLeaving>
   </ThingDef>
-
-  <ThingDef ParentName="BuildingBase">
-  	<defName>SignalConduit</defName>
-    <label>signal conduit</label>
+	
+  <ThingDef Name="SignalConduitBase" Abstract="True" ParentName="BuildingBase">
+  	<label>signal conduit</label>
     <thingClass>Building</thingClass>
     <linkDrawerType>Basic</linkDrawerType>
     <linkFlags>
@@ -41,6 +40,22 @@
     </statBases>
     <description>A set of electrical cables for moving signals around.</description>
     <placingDraggableDimensions>1</placingDraggableDimensions>
+    <costList>
+      <Steel>1</Steel>
+    </costList>
+    <rotatable>false</rotatable>
+    <selectable>true</selectable>
+    <neverMultiSelect>true</neverMultiSelect>
+    <soundImpactDefault>BulletImpactMetal</soundImpactDefault>
+    <terrainAffordanceNeeded>Light</terrainAffordanceNeeded>
+    <designationCategory>Signals</designationCategory>
+    <constructEffect>ConstructMetal</constructEffect>
+  </ThingDef>
+
+  <ThingDef ParentName="SignalConduitBase">
+  	<defName>SignalConduit</defName>
+  	<thingClass>Building</thingClass>
+    <label>signal conduit</label>
     <costList>
       <Steel>1</Steel>
     </costList>
@@ -50,43 +65,12 @@
     	<signalWidth>1</signalWidth>
       </li>
     </comps>
-    <rotatable>false</rotatable>
-    <selectable>true</selectable>
-    <neverMultiSelect>true</neverMultiSelect>
-    <soundImpactDefault>BulletImpactMetal</soundImpactDefault>
-    <terrainAffordanceNeeded>Light</terrainAffordanceNeeded>
-    <designationCategory>Signals</designationCategory>
-    <constructEffect>ConstructMetal</constructEffect>
   </ThingDef>
 
-  <ThingDef ParentName="BuildingBase">
+  <ThingDef ParentName="SignalConduitBase">
   	<defName>SignalConduitW</defName>
+  	<thingClass>Building</thingClass>
     <label>3x signal conduit</label>
-    <thingClass>Building</thingClass>
-    <linkDrawerType>Basic</linkDrawerType>
-    <linkFlags>
-      <li>Custom7</li>
-    </linkFlags>
-  	<category>Building</category>
-    <graphicPath>Things/Building/Linked/PowerConduit_Atlas</graphicPath>
-    <graphicClass>Graphic_Single</graphicClass>
-    <blueprintgraphicPath>Things/Building/Linked/PowerConduit_Blueprint_Atlas</blueprintgraphicPath>
-    <uiIconPath>Things/Building/Linked/PowerConduit_MenuIcon</uiIconPath>
-    <building>
-      <ignoreNeedsPower>true</ignoreNeedsPower>
-      <isEdifice>false</isEdifice>
-    </building>
-    <altitudeLayer>FloorEmplacement</altitudeLayer>
-    <passability>Standable</passability>
-    <leaveResourcesWhenKilled>false</leaveResourcesWhenKilled>
-    <statBases>
-      <MaxHitPoints>80</MaxHitPoints>
-      <WorkToMake>35</WorkToMake>
-      <Flammability>1.0</Flammability>
-      <Beauty>-2</Beauty>
-    </statBases>
-    <description>A set of electrical cables for moving signals around.</description>
-    <placingDraggableDimensions>1</placingDraggableDimensions>
     <costList>
       <Steel>1</Steel>
     </costList>
@@ -96,42 +80,12 @@
     	<signalWidth>3</signalWidth>
       </li>
     </comps>
-    <rotatable>false</rotatable>
-    <selectable>true</selectable>
-    <neverMultiSelect>true</neverMultiSelect>
-    <soundImpactDefault>BulletImpactMetal</soundImpactDefault>
-    <terrainAffordanceNeeded>Light</terrainAffordanceNeeded>
-    <designationCategory>Signals</designationCategory>
-    <constructEffect>ConstructMetal</constructEffect>
   </ThingDef>
 
-	<ThingDef ParentName="BuildingBase">
+	<ThingDef ParentName="SignalConduitBase">
   	<defName>SignalConduitWW</defName>
+	<thingClass>Building</thingClass>
     <label>9x signal conduit</label>
-    <thingClass>Building</thingClass>
-    <linkDrawerType>Basic</linkDrawerType>
-    <linkFlags>
-      <li>Custom7</li>
-    </linkFlags>
-  	<category>Building</category>
-    <graphicPath>Things/Building/Linked/PowerConduit_Atlas</graphicPath>
-    <graphicClass>Graphic_Single</graphicClass>
-    <blueprintgraphicPath>Things/Building/Linked/PowerConduit_Blueprint_Atlas</blueprintgraphicPath>
-    <uiIconPath>Things/Building/Linked/PowerConduit_MenuIcon</uiIconPath>
-    <building>
-      <ignoreNeedsPower>true</ignoreNeedsPower>
-      <isEdifice>false</isEdifice>
-    </building>
-    <altitudeLayer>FloorEmplacement</altitudeLayer>
-    <passability>Standable</passability>
-    <leaveResourcesWhenKilled>false</leaveResourcesWhenKilled>
-    <statBases>
-      <MaxHitPoints>80</MaxHitPoints>
-      <WorkToMake>35</WorkToMake>
-      <Flammability>1.0</Flammability>
-      <Beauty>-2</Beauty>
-    </statBases>
-    <description>A set of electrical cables for moving signals around.</description>
     <placingDraggableDimensions>1</placingDraggableDimensions>
     <costList>
       <Steel>1</Steel>
@@ -142,13 +96,6 @@
     	<signalWidth>9</signalWidth>
       </li>
     </comps>
-    <rotatable>false</rotatable>
-    <selectable>true</selectable>
-    <neverMultiSelect>true</neverMultiSelect>
-    <soundImpactDefault>BulletImpactMetal</soundImpactDefault>
-    <terrainAffordanceNeeded>Light</terrainAffordanceNeeded>
-    <designationCategory>Signals</designationCategory>
-    <constructEffect>ConstructMetal</constructEffect>
   </ThingDef>
 
 
