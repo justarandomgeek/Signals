@@ -16,16 +16,21 @@
   <ThingDef Name="SignalConduitBase" Abstract="True" ParentName="BuildingBase">
   	<label>signal conduit</label>
     <thingClass>Building</thingClass>
-    <linkDrawerType>Basic</linkDrawerType>
-    <linkFlags>
-      <li>Custom7</li>
-    </linkFlags>
+	<graphicData>
+      <texPath>Things/Building/Linked/PowerConduit_Atlas</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <linkType>Basic</linkType>
+      <linkFlags>
+        <li>Custom7</li>
+      </linkFlags>
+    </graphicData>
   	<category>Building</category>
-    <graphicPath>Things/Building/Linked/PowerConduit_Atlas</graphicPath>
-    <graphicClass>Graphic_Single</graphicClass>
-    <blueprintgraphicPath>Things/Building/Linked/PowerConduit_Blueprint_Atlas</blueprintgraphicPath>
+    <blueprintGraphicData>
+      <texPath>Things/Building/Linked/PowerConduit_Blueprint_Atlas</texPath>
+    </blueprintGraphicData>
     <uiIconPath>Things/Building/Linked/PowerConduit_MenuIcon</uiIconPath>
     <building>
+      <isInert>true</isInert>
       <ignoreNeedsPower>true</ignoreNeedsPower>
       <isEdifice>false</isEdifice>
     </building>
@@ -82,7 +87,7 @@
     </comps>
   </ThingDef>
 
-	<ThingDef ParentName="SignalConduitBase">
+  <ThingDef ParentName="SignalConduitBase">
   	<defName>SignalConduitWW</defName>
 	<thingClass>Building</thingClass>
     <label>9x signal conduit</label>
@@ -105,10 +110,12 @@
     <thingClass>Signals.Building_PowerRelay</thingClass>
     <category>Building</category>
     <description>Switches power on/off controlled by a signal.</description>
-    <graphicPath>Things/Building/Power/PowerSwitch_On</graphicPath>
-    <graphicClass>Graphic_Single</graphicClass>
-    <graphicShaderType>Transparent</graphicShaderType>
-    <building>
+  	<graphicData>
+      <texPath>Things/Building/Power/PowerSwitch_On</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <shaderType>Transparent</shaderType>
+    </graphicData>
+  	<building>
       <ignoreNeedsPower>true</ignoreNeedsPower>
       <isEdifice>true</isEdifice>
       <allowWireConnection>false</allowWireConnection>
@@ -150,9 +157,11 @@
     <thingClass>Signals.Building_PowerSensor</thingClass>
     <category>Building</category>
     <description>Sends a signal based on the power level in a power circuit.</description>
-    <graphicPath>Things/Building/Power/PowerSwitch_On</graphicPath>
-    <graphicClass>Graphic_Single</graphicClass>
-    <graphicShaderType>Transparent</graphicShaderType>
+    <graphicData>
+      <texPath>Things/Building/Power/PowerSwitch_On</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <shaderType>Transparent</shaderType>
+    </graphicData>
     <building>
       <ignoreNeedsPower>true</ignoreNeedsPower>
       <isEdifice>true</isEdifice>
@@ -195,9 +204,11 @@
     <thingClass>Signals.Building_PressurePlate</thingClass>
     <category>Building</category>
     <description>Sends a signal based on the items piled on top of it.</description>
-    <graphicPath>Terrain/Surfaces/MetalTile</graphicPath>
-    <graphicClass>Graphic_Single</graphicClass>
-    <graphicShaderType>Transparent</graphicShaderType>
+    <graphicData>
+      <texPath>Terrain/Surfaces/MetalTile</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <shaderType>Transparent</shaderType>
+    </graphicData>
     <building>
       <ignoreNeedsPower>true</ignoreNeedsPower>
       <isEdifice>true</isEdifice>
@@ -236,9 +247,11 @@
     <thingClass>Signals.Building_MuxDemux</thingClass>
     <category>Building</category>
     <description>Combines three single-wire signals into one three-wire signal</description>
-    <graphicPath>Things/Signals/MuxDemux</graphicPath>
-    <graphicClass>Graphic_Single</graphicClass>
-    <graphicShaderType>Transparent</graphicShaderType>
+    <graphicData>
+      <texPath>Things/Signals/MuxDemux</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <shaderType>Transparent</shaderType>
+    </graphicData>
     <building>
       <ignoreNeedsPower>true</ignoreNeedsPower>
       <isEdifice>true</isEdifice>
@@ -297,9 +310,11 @@
     <thingClass>Signals.Building_MuxDemux</thingClass>
     <category>Building</category>
     <description>Combines three three-wire signals into one nine-wire signal</description>
-    <graphicPath>Things/Signals/MuxDemuxW</graphicPath>
-    <graphicClass>Graphic_Single</graphicClass>
-    <graphicShaderType>Transparent</graphicShaderType>
+    <graphicData>
+      <texPath>Things/Signals/MuxDemuxW</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <shaderType>Transparent</shaderType>
+    </graphicData>
     <building>
       <ignoreNeedsPower>true</ignoreNeedsPower>
       <isEdifice>true</isEdifice>
@@ -359,9 +374,11 @@
     <thingClass>Signals.Building_LogicGateAND</thingClass>
     <category>Building</category>
     <description>Outputs the Logical AND of any connected signals</description>
-    <graphicPath>Things/Signals/LogicGateAND</graphicPath>
-    <graphicClass>Graphic_Single</graphicClass>
-    <graphicShaderType>Transparent</graphicShaderType>
+    <graphicData>
+      <texPath>Things/Signals/LogicGateAND</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <shaderType>Transparent</shaderType>
+    </graphicData>
     <building>
       <ignoreNeedsPower>true</ignoreNeedsPower>
       <isEdifice>true</isEdifice>
@@ -420,9 +437,11 @@
     <thingClass>Signals.Building_LogicGateXOR</thingClass>
     <category>Building</category>
     <description>Outputs the Logical XOR of any connected signals</description>
-    <graphicPath>Things/Signals/LogicGateXOR</graphicPath>
-    <graphicClass>Graphic_Single</graphicClass>
-    <graphicShaderType>Transparent</graphicShaderType>
+    <graphicData>
+      <texPath>Things/Signals/LogicGateXOR</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <shaderType>Transparent</shaderType>
+    </graphicData>
     <building>
       <ignoreNeedsPower>true</ignoreNeedsPower>
       <isEdifice>true</isEdifice>
@@ -481,9 +500,11 @@
     <thingClass>Signals.Building_LogicBuffer</thingClass>
     <category>Building</category>
     <description>Buffers the transmission of a signal from one net to another. This is a one-way gate.</description>
-    <graphicPath>Things/Signals/LogicBuffer</graphicPath>
-    <graphicClass>Graphic_Single</graphicClass>
-    <graphicShaderType>Transparent</graphicShaderType>
+    <graphicData>
+      <texPath>Things/Signals/LogicBuffer</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <shaderType>Transparent</shaderType>
+    </graphicData>
     <building>
       <ignoreNeedsPower>true</ignoreNeedsPower>
       <isEdifice>true</isEdifice>
@@ -528,9 +549,11 @@
     <thingClass>Building</thingClass>
     <category>Building</category>
     <description>Allows signals to cross over each other.</description>
-    <graphicPath>Things/Signals/Crossover</graphicPath>
-    <graphicClass>Graphic_Single</graphicClass>
-    <graphicShaderType>Transparent</graphicShaderType>
+    <graphicData>
+      <texPath>Things/Signals/Crossover</texPath>
+      <graphicClass>Graphic_Single</graphicClass>
+      <shaderType>Transparent</shaderType>
+    </graphicData>
     <building>
       <ignoreNeedsPower>true</ignoreNeedsPower>
       <isEdifice>true</isEdifice>

@@ -24,7 +24,7 @@ namespace Signals
 		{
 			signalGrid = new List<CompSignal>[CellIndices.NumGridCells];
 			
-			foreach (var i in CellIndices.AllCellIndicesOnMap) {
+			for (int i = 0; i < CellIndices.NumGridCells; i++) {
 				signalGrid[i] = new List<CompSignal>();
 			}
 		}

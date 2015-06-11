@@ -88,7 +88,7 @@ namespace Signals
 		{
 			base.Tick();
 			
-			compSignal.OutputSignal[0] = Find.ThingGrid.CellContains(this.Position,EntityCategory.Item);
+			compSignal.OutputSignal[0] = Find.ThingGrid.CellContains(this.Position,ThingCategory.Item);
 		}
 	}
 	
