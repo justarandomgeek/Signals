@@ -27,7 +27,7 @@ namespace Signals
 		private static int lastID;
 		
 		public List<CompSignal.SubNode> nodes = new List<CompSignal.SubNode>();
-		public List<Tuple<CompSignalSource,int>> sources = new List<Tuple<CompSignalSource,int>>();
+		public List<CompSignal.SubNode> sources = new List<CompSignalSource.SubNode>();
 		public int NetID { get; private set; }
 		
 		
@@ -79,7 +79,7 @@ namespace Signals
 			var source = node as CompSignalSource;
 			if(source != null)
 			{
-				sources.Add(new Tuple<CompSignalSource, int>(source,idx));
+				sources.Add(new CompSignal.SubNode(source,idx));
 			}
 			
 		}		
@@ -98,7 +98,7 @@ namespace Signals
 			
 			// If node is a Source, remove it there too..
 			var source = node as CompSignalSource;
-			if(source != null) sources.Remove(new Tuple<CompSignalSource, int>(source,idx));
+			if(source != null) sources.Remove(new CompSignal.SubNode(source,idx));
 		}
 		
 		
@@ -107,7 +107,7 @@ namespace Signals
 			bool sig = false;
 			
 			foreach (var source in sources) {
-				sig |= source.First.OutputSignal[source.Second];
+				sig |= (source.Node as CompSignalSource).OutputSignal[source.Index];
 			}
 			
 			return sig;
