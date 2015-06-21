@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
   <PropertyGroup>
     <ProjectGuid>{48464567-33AF-407F-9B89-49B8F97B75DD}</ProjectGuid>
@@ -90,6 +90,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>cp $(ProjectDir)$(OutputPath)Signals.dll $(ProjectDir)Assemblies\Signals.dll</PostBuildEvent>
+    <PostBuildEvent>cp $(ProjectDir)$(OutputPath)Signals.dll $(ProjectDir)Assemblies\Signals.dll
+"c:\Program Files\7-Zip\7z.exe" a $(ProjectDir)\Signals.zip $(ProjectDir) -x@$(ProjectDir)\.zipignore
+</PostBuildEvent>
   </PropertyGroup>
 </Project>
