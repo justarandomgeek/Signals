@@ -66,6 +66,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Source\JunctionBox.cs" />
     <Compile Include="Source\SignalGrid.cs" />
     <Compile Include="Source\SignalNet.cs" />
     <Compile Include="Source\Signals.cs" />

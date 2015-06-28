@@ -142,17 +142,17 @@ namespace Signals
             if(this.Rotation == Rot4.North || this.Rotation == Rot4.East)
             {
             	for (int i = 0; i < a.SignalWidth; i++) {
-            		CompSignal.RegisterBridge(new SignalBridge{wide[i]						,a[i]});
-            		CompSignal.RegisterBridge(new SignalBridge{wide[i+a.SignalWidth]		,b[i]});
-            		CompSignal.RegisterBridge(new SignalBridge{wide[i+(2*a.SignalWidth)]	,c[i]});
+            		SignalBridgeManager.Register(new SignalBridge(this){wide[i]						,a[i]});
+            		SignalBridgeManager.Register(new SignalBridge(this){wide[i+a.SignalWidth]		,b[i]});
+            		SignalBridgeManager.Register(new SignalBridge(this){wide[i+(2*a.SignalWidth)]	,c[i]});
             	}
             }
             else
             {
             	for (int i = 0; i < a.SignalWidth; i++) {
-            		CompSignal.RegisterBridge(new SignalBridge{wide[i]						,c[i]});	
-            		CompSignal.RegisterBridge(new SignalBridge{wide[i+a.SignalWidth]		,b[i]});
-            		CompSignal.RegisterBridge(new SignalBridge{wide[i+(2*a.SignalWidth)]	,a[i]});
+            		SignalBridgeManager.Register(new SignalBridge(this){wide[i]						,c[i]});	
+            		SignalBridgeManager.Register(new SignalBridge(this){wide[i+a.SignalWidth]		,b[i]});
+            		SignalBridgeManager.Register(new SignalBridge(this){wide[i+(2*a.SignalWidth)]	,a[i]});
             	}
             }
         }

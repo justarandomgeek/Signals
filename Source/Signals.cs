@@ -28,24 +28,154 @@ namespace Signals
 		}
 	}
 	
-	public class SignalBridge : List<CompSignal.SubNode>
+	
+	public class SignalBridge : List<CompSignal.SubNode>, IExposable
 	{
 		static int nextID;
 		
 		public int id = nextID++;
+		private Thing parent;
+		public Thing Parent{get{return parent;}}
+		
+		public SignalBridge(Thing parent): base()
+		{
+			this.parent = parent;
+		}
+		
+		public SignalBridge(): base()
+		{}
+		
+		public void ExposeData()
+		{
+			Scribe_References.LookReference(ref parent,"parent");
+			
+			if (Scribe.mode == LoadSaveMode.Saving)
+			{
+				Scribe.EnterNode("nodes");
+				if (this == null)
+				{
+					Scribe.WriteAttribute("IsNull", "True");
+				}
+				else
+				{
+					foreach (var node in this)
+					{
+						String rebuild = node.RebuildLabel();
+						Scribe_Values.LookValue(ref rebuild,"li");
+					}
+				}
+				Scribe.ExitNode();
+			}
+			else if (Scribe.mode == LoadSaveMode.LoadingVars)
+			{
+				System.Xml.XmlNode xmlNode = Scribe.curParent["nodes"];
+				if (xmlNode == null)
+				{
+					return;
+				}
+				System.Xml.XmlAttribute xmlAttribute = xmlNode.Attributes["IsNull"];
+				if (xmlAttribute != null && xmlAttribute.Value.ToLower() == "true")
+				{
+					return;
+				}
+				
+				
+				foreach (System.Xml.XmlNode subNode2 in xmlNode.ChildNodes)
+				{
+					string rebuild = ScribeExtractor.ValueFromNode(subNode2,"");
+					
+					string label = rebuild.Split(':')[0];
+					int idx = int.Parse(rebuild.Split(':')[1]);
+					
+					this.Add(new CompSignal.SubNode(null,label,idx));
+						
+				}
+			} else if (Scribe.mode == LoadSaveMode.ResolvingCrossRefs)
+			{
+				foreach (var node in this.ListFullCopy()) {
+					this.Remove(node);
+					node.ReParent((ThingWithComps)parent);
+					this.Add(node);
+				}
+			}
+		}
+		
+		
+	}
+	public static class SignalBridgeManager
+	{
+		private readonly static List<SignalBridge> signalBridges = new List<SignalBridge>();
+		
+		public static List<SignalBridge> FindAllBridges(Predicate<SignalBridge> p)
+		{
+			return signalBridges.FindAll(p);
+		}
+		
+		public static SignalBridge FindBridge(Predicate<SignalBridge> p)
+		{
+			return signalBridges.Find(p);
+		}
+		
+		public static void Register(SignalBridge sb)
+		{
+			
+			signalBridges.Add(sb);
+			var basenet = sb[0].ConnectedNet;
+			foreach (var node in sb) {
+				if(node.ConnectedNet != basenet)
+				{
+					node.ConnectedNet.MergeIntoNet(basenet);
+				}
+			}
+		}
+		
+		public static void Deregister(SignalBridge sb)
+		{
+			signalBridges.Remove(sb);
+		}
+		
 	}
 	
 	public class CompSignal: ThingComp
 	{
 		public struct SubNode
 		{
-			public readonly CompSignal Node;
-			public readonly int Index;
+			
+			private Thing nodeparent;
+			private string nodelabel;
+			public CompSignal Node{
+				get
+				{
+					Log.Message(string.Format("Getting Node from {0}:{1}",nodeparent,nodelabel));
+					return (nodeparent as ThingWithComps).GetSignal(nodelabel);
+				}
+			}
+			
+			private int idx;
+			public int Index{get{return idx;}}
+			
+			public string RebuildLabel()
+			{
+				return nodelabel + ":" + idx;
+			}
+			
+			public void ReParent(ThingWithComps parent)
+			{
+				nodeparent =  parent;
+			}
 			
 			public SubNode(CompSignal node, int idx)
 			{
-				this.Node = node;
-				this.Index = idx;
+				this.nodeparent = node.parent;
+				this.nodelabel = node.Label;
+				this.idx = idx;
+			}
+			
+			public SubNode(ThingWithComps parent, String label, int idx)
+			{
+				this.nodeparent = parent;
+				this.nodelabel = label;
+				this.idx = idx;
 			}
 			
 			public SignalNet ConnectedNet { get { return Node.ConnectedNets[Index]; } }
@@ -58,28 +188,15 @@ namespace Signals
 				}
 				
 				var thisNode = this;
-				var bridge = signalBridges.Find(sb=>sb.Contains(thisNode));
+				var bridge = SignalBridgeManager.FindBridge(sb=>sb.Contains(thisNode));
 				if(bridge!=null)
 				{
 					foreach (var subnode in bridge) {
 						yield return subnode;
 					}
 				}				
-			}
-		}
-		
-		private static List<SignalBridge> signalBridges = new List<SignalBridge>();
-		
-		public static void RegisterBridge(SignalBridge sb)
-		{
-			signalBridges.Add(sb);
-			var basenet = sb[0].ConnectedNet;
-			foreach (var node in sb) {
-				if(node.ConnectedNet != basenet)
-				{
-					node.ConnectedNet.MergeIntoNet(basenet);
-				}
-			}
+			}			
+			
 		}
 		
 		CompProperties_Signals PropsSig
@@ -161,12 +278,12 @@ namespace Signals
 			
 			SignalGrid.Deregister(this);
 			
-			var bridges = signalBridges.FindAll(sb=> sb.FindAll(n=>n.Node==this).Count == 0);
+			var bridges = SignalBridgeManager.FindAllBridges(sb=> sb.FindAll(n=>n.Node==this).Count == 0);
 			foreach(var bridge in bridges)
 			{
 				bridge.RemoveAll(n=>n.Node==this);
 				
-				if(bridge.Count <2) signalBridges.Remove(bridge);
+				if(bridge.Count <2) SignalBridgeManager.Deregister(bridge);
 			}
 				
 			
